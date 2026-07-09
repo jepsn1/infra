@@ -1,0 +1,8 @@
+# Dev server on WAN behind basic auth. Password: /srv/infra/compose/.dev-password (not committed).
+# Regenerate: docker exec infra-caddy caddy hash-password --plaintext '<new>' -> replace hash below.
+dev.biblestdy.com {
+	basic_auth {
+		marcus $2a$14$xVc8wttvNP1.Rngrwb1lv.GmiSIk5fuji.I0ExdyRC9bRDX4MAHom
+	}
+	reverse_proxy host.docker.internal:5173
+}

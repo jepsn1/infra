@@ -11,6 +11,8 @@ services:
       - "443:443/udp"
     environment:
       CADDY_EMAIL: ${CADDY_EMAIL:-}
+    extra_hosts:
+      - host.docker.internal:host-gateway   # lets caddy proxy to native dev servers on the host
     volumes:
       - ../caddy:/etc/caddy:ro
       - /srv/data/caddy/data:/data

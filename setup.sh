@@ -61,13 +61,18 @@ fi
 log "Configuring Docker"
 systemctl enable --now docker
 usermod -aG docker "$DEV_USER"
-docker network inspect web >/dev/null 2>&1 || docker network create web
+# Pinned subnet: UFW dev-server rules below reference it
+docker network inspect web >/dev/null 2>&1 || docker network create --subnet 172.18.0.0/16 web
 
 # --- Firewall -------------------------------------------------------------
 log "Configuring UFW"
 ufw allow OpenSSH >/dev/null
 ufw allow 80/tcp >/dev/null
 ufw allow 443/tcp >/dev/null
+# Native dev servers: reachable from LAN directly, and from caddy (basic_auth WAN wall)
+ufw allow from 172.18.0.0/16 to any port 5173 proto tcp comment 'caddy -> vite dev' >/dev/null
+ufw allow from 192.168.18.0/24 to any port 5173 proto tcp comment 'LAN -> vite dev' >/dev/null
+ufw allow from 192.168.18.0/24 to any port 3000:3999 proto tcp comment 'LAN -> dev servers' >/dev/null
 ufw --force enable
 
 # --- Fail2ban ---------------------------------------------------------------
