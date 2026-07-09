@@ -107,7 +107,7 @@ if [[ ! -f "$ENV_FILE" ]]; then
     log "Generating $ENV_FILE"
     cat > "$ENV_FILE" <<EOF
 POSTGRES_PASSWORD=$(openssl rand -hex 24)
-CADDY_EMAIL=
+CADDY_EMAIL=marcus@jepsn.com
 EOF
     chown "$DEV_USER:$DEV_USER" "$ENV_FILE"
     chmod 600 "$ENV_FILE"

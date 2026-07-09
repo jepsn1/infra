@@ -25,4 +25,11 @@ fi
 # Rotate
 find "$BACKUP_DIR" -maxdepth 1 -name '*.gz' -mtime +"$KEEP_DAYS" -delete
 
+# Mirror to second physical drive (set up via scripts/setup-backup-drive.sh)
+if mountpoint -q /mnt/backup; then
+    rsync -a --delete "$BACKUP_DIR"/ /mnt/backup/srv-backups/
+else
+    echo "WARN: /mnt/backup not mounted, skipping mirror"
+fi
+
 echo "[$STAMP] backup done: $(ls -lh "$BACKUP_DIR" | tail -n +2 | wc -l) files, $(du -sh "$BACKUP_DIR" | cut -f1) total"

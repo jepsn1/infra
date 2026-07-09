@@ -58,6 +58,13 @@ Caddy in Docker, automatic HTTPS. Config: `caddy/Caddyfile` imports `caddy/sites
 
 One domain/subdomain per app, A-record to this server. Document each app's domain in its `caddy/sites/<app>.caddy` file (source of truth) and the app's AGENTS.md.
 
+| Domain | Purpose |
+|---|---|
+| metal.jepsn.com | SSH access to this machine over WAN (no Caddy involvement) |
+| biblestdy.com | biblestdy app (not yet deployed) |
+
+Let's Encrypt email: marcus@jepsn.com (`CADDY_EMAIL` in `compose/.env`).
+
 ## Deployment workflow
 
 Dev is native (VS Code Remote SSH + Claude Code in `/srv/apps/<app>`). Production per app:
@@ -83,7 +90,8 @@ Daily 03:00 via `/etc/cron.d/infra-backup` → `backups/backup.sh` → `/srv/dat
 - `postgres-<stamp>.sql.gz` — `pg_dumpall` of the whole cluster
 - `uploads-<stamp>.tar.gz` — `/srv/data/uploads`
 - Rotation: 14 days. Restore: `backups/restore.sh` (see `docs/recovery.md`).
-- NOTE: backups are local-only; off-site copy is an open TODO.
+- Mirror: every run rsyncs to `/mnt/backup/srv-backups` (second physical drive, set up once via `scripts/setup-backup-drive.sh`). Survives primary-drive failure.
+- NOTE: no off-site copy yet (fire/theft) — open TODO.
 
 ## Disaster recovery
 
@@ -103,6 +111,7 @@ scripts/logs.sh [container]    # tail logs (default: shared services)
 scripts/caddy-reload.sh        # after editing caddy/
 scripts/new-app.sh ...         # register new app
 backups/backup.sh              # manual backup now
+scripts/setup-backup-drive.sh  # one-time: format+mount backup mirror drive
 ```
 
 ## Conventions

@@ -1,6 +1,6 @@
 # Disaster recovery
 
-Full VPS loss → working system. Requires: GitHub access, latest backup files (NOTE: backups are local-only in `/srv/data/backups` — copy them off-site or they die with the VPS).
+Full VPS loss → working system. Requires: GitHub access, latest backup files. Backups live in `/srv/data/backups` and are mirrored to `/mnt/backup/srv-backups` on a second physical drive — survives primary-drive failure, NOT machine loss (fire/theft). No off-site copy yet.
 
 ## Procedure
 
