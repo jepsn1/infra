@@ -79,6 +79,17 @@ EOF
 systemctl enable --now fail2ban
 systemctl restart fail2ban
 
+# --- DNS: public resolvers, don't depend on router DNS -----------------------
+log "Configuring public DNS resolvers"
+mkdir -p /etc/systemd/resolved.conf.d
+cat > /etc/systemd/resolved.conf.d/public-dns.conf <<'EOF'
+[Resolve]
+DNS=1.1.1.1 8.8.8.8
+FallbackDNS=9.9.9.9
+Domains=~.
+EOF
+systemctl restart systemd-resolved
+
 # --- SSH hardening ----------------------------------------------------------
 # Only disable password auth if the dev user actually has a key installed.
 if [[ -s "$DEV_HOME/.ssh/authorized_keys" ]]; then
