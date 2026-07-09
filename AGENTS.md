@@ -47,6 +47,8 @@ External network `web` (created by setup.sh). Every production app container and
 
 Caddy in Docker, automatic HTTPS. Config: `caddy/Caddyfile` imports `caddy/sites/*.caddy` — one file per app. Add apps with `scripts/new-app.sh <name> <domain> <port> [git-url]`; reload config with `scripts/caddy-reload.sh`. Site files are committed to this repo.
 
+Static SPAs: caddy mounts `/srv/apps` read-only, so a site file can `file_server` an app's build dir directly and proxy only `/api/*` to the app container (see `sites/biblestdy.caddy`).
+
 ## Port allocation
 
 - 22, 80, 443: only public ports (UFW). Caddy owns 80/443.
@@ -61,7 +63,7 @@ One domain/subdomain per app, A-record to this server. Document each app's domai
 | Domain | Purpose |
 |---|---|
 | metal.jepsn.com | SSH access to this machine over WAN (no Caddy involvement) |
-| biblestdy.com | biblestdy app (not yet deployed) |
+| biblestdy.com | biblestdy app |
 
 Let's Encrypt email: marcus@jepsn.com (`CADDY_EMAIL` in `compose/.env`).
 
@@ -143,4 +145,4 @@ scripts/setup-backup-drive.sh  # one-time: format+mount backup mirror drive
 
 | App | Repo | Path | Status |
 |---|---|---|---|
-| biblestdy | github.com/jepsn1/biblestdy | /srv/apps/biblestdy | dev only, not deployed |
+| biblestdy | github.com/jepsn1/biblestdy | /srv/apps/biblestdy | deployed (SPA static + `biblestdy-api` container; `make deploy`) |

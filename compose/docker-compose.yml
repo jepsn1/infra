@@ -15,6 +15,7 @@ services:
       - ../caddy:/etc/caddy:ro
       - /srv/data/caddy/data:/data
       - /srv/data/caddy/config:/config
+      - /srv/apps:/srv/apps:ro   # static SPA builds served directly (e.g. biblestdy)
     networks: [web]
 
   postgres:

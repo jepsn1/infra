@@ -1,0 +1,14 @@
+biblestdy.com {
+	encode zstd gzip
+
+	handle /api/* {
+		reverse_proxy biblestdy-api:3001
+	}
+
+	# SPA: static build (pnpm --filter @biblestdy/web build), client-side routing fallback
+	handle {
+		root * /srv/apps/biblestdy/apps/web/build/client
+		try_files {path} /index.html
+		file_server
+	}
+}
