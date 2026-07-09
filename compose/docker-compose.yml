@@ -1,0 +1,50 @@
+name: infra
+
+services:
+  caddy:
+    image: caddy:2
+    container_name: infra-caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    environment:
+      CADDY_EMAIL: ${CADDY_EMAIL:-}
+    volumes:
+      - ../caddy:/etc/caddy:ro
+      - /srv/data/caddy/data:/data
+      - /srv/data/caddy/config:/config
+    networks: [web]
+
+  postgres:
+    image: postgres:17
+    container_name: infra-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set in compose/.env}
+    ports:
+      - "127.0.0.1:5432:5432"   # native dev access only; not exposed publicly
+    volumes:
+      - /srv/data/postgres:/var/lib/postgresql/data
+    networks: [web]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:8
+    container_name: infra-redis
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes"]
+    ports:
+      - "127.0.0.1:6379:6379"   # native dev access only
+    volumes:
+      - /srv/data/redis:/data
+    networks: [web]
+
+networks:
+  web:
+    external: true

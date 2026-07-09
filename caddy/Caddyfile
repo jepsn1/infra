@@ -1,0 +1,6 @@
+{
+	email {$CADDY_EMAIL}
+}
+
+# One file per application in sites/. Empty glob is fine.
+import sites/*.caddy
