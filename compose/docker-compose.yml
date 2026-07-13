@@ -21,7 +21,7 @@ services:
     networks: [web]
 
   postgres:
-    image: postgres:17
+    image: pgvector/pgvector:pg17-trixie   # postgres:17 + pgvector (drop-in, same data dir); trixie = same glibc as prior postgres:17, avoids collation mismatch. Needed by pkos.
     container_name: infra-postgres
     restart: unless-stopped
     environment:
