@@ -67,6 +67,15 @@ One domain/subdomain per app, A-record to this server. Document each app's domai
 
 Let's Encrypt email: marcus@jepsn.com (`CADDY_EMAIL` in `compose/.env`).
 
+## Tailscale (private access)
+
+Host-level `tailscaled` (installed 2026-07-14, via official install script + auth key). This machine: `100.114.149.55`, MagicDNS name `bare-metal`, account marcusklausen@.
+
+- Private (non-public) apps publish container ports bound to the tailscale IP instead of a caddy site — e.g. pkos: `"${TAILSCALE_IP}:3002:3002"` from the app's `.env`. Never 0.0.0.0 (published ports bypass UFW).
+- SSH: `ssh marcus@100.114.149.55` works from any tailnet device — WAN alternative to metal.jepsn.com.
+- Dev servers stay on localhost by default; bind the tailscale IP explicitly when phone/laptop access is wanted.
+- Tailscale IP is stable per machine; if the node is ever re-added, update each private app's `.env`.
+
 ## Deployment workflow
 
 Dev is native (VS Code Remote SSH + Claude Code in `/srv/apps/<app>`). Production per app:
