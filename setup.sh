@@ -75,6 +75,19 @@ ufw allow from 192.168.18.0/24 to any port 5173 proto tcp comment 'LAN -> vite d
 ufw allow from 192.168.18.0/24 to any port 3000:3999 proto tcp comment 'LAN -> dev servers' >/dev/null
 ufw --force enable
 
+# --- Tailscale (private access: SSH, non-public apps) -----------------------
+# See AGENTS.md "Tailscale". Joining the tailnet is interactive (account auth),
+# so setup only installs + enables; on a fresh machine run `tailscale up` after.
+if ! command -v tailscale >/dev/null; then
+    log "Installing Tailscale"
+    curl -fsSL https://tailscale.com/install.sh | sh
+fi
+systemctl enable --now tailscaled
+if ! tailscale status >/dev/null 2>&1; then
+    log "WARNING: not joined to a tailnet — run: sudo tailscale up
+    Then update TAILSCALE_IP in each private app's .env (tailscale ip -4); see AGENTS.md."
+fi
+
 # --- Fail2ban ---------------------------------------------------------------
 log "Configuring fail2ban"
 cat > /etc/fail2ban/jail.local <<'EOF'
