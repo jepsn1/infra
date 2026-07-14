@@ -1,4 +1,5 @@
 biblestdy.com {
+	log
 	encode zstd gzip
 
 	handle /api/* {
